@@ -2,22 +2,41 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <title>로그인</title>
-  <link rel="stylesheet" href="style.css" />
+  <title>관리자 메인</title>
+  <link rel="stylesheet" href="main.css" />
+  <meta http-equiv="Content-Security-Policy" content="frame-ancestors 'self' https://champion224.github.io">
+
 </head>
 <body>
-  <div id="login-container">
-  <img src="https://github.com/championsiheung/coupon_test/blob/main/%EB%A1%9C%EA%B3%A0.png?raw=true" alt="로고" id="login-logo" />
-  
-  <form id="login-form">
-    <input type="text" id="username" placeholder="아이디" required />
-    <input type="password" id="password" placeholder="비밀번호" required />
-    <button type="submit">로그인</button>
-  </form>
 
-  <p id="login-error" style="display:none; color:red;"></p>
+<div class="container">
+  <div class="sidebar">
+    <h2>📁 메뉴</h2>
+    <ul>
+      <iframe id="mainFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+      <li onclick="loadPage('../OtherPage/index.html')">다른 메뉴</li>
+    </ul>
+  </div>
+
+  <div class="main-content">
+    <iframe id="mainFrame" src=""></iframe>
+  </div>
 </div>
 
-  <script src="script.js"></script>
+  <!-- 세션 연장 모달 -->
+<div id="session-modal" style="display:none;">
+  <div id="session-modal-content">
+    <p id="session-time-text">남은 로그인 시간: 00:30</p>
+    <div id="session-modal-buttons">
+      <button id="extend-session-btn">연장하기</button>
+      <button id="logout-now-btn">연장 안함</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- JS 연결 -->
+<script src="main.js"></script>
+
 </body>
 </html>

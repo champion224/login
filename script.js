@@ -1,36 +1,77 @@
-const LOGIN_DURATION = 30 * 60 * 1000; // 30초 예시 (필요시 변경)
+// main.js
 
-document.addEventListener("DOMContentLoaded", () => {
-  const loginForm = document.getElementById("login-form");
-  const errorMsg = document.getElementById("login-error");
+function loadPage(url) {
+  document.getElementById("mainFrame").src = url;
+}
 
-  loginForm.addEventListener("submit", function (e) {
-    e.preventDefault();
+const LOGIN_DURATION = 30 * 60 * 1000; // 1분 유효시간
 
-    const usernameInput = document.getElementById("username");
-    const passwordInput = document.getElementById("password");
+(function () {
+  const expireTime = sessionStorage.getItem("expireTime");
+  const isLoggedIn = sessionStorage.getItem("isLoggedIn");
 
-    const username = usernameInput.value.trim();
-    const password = passwordInput.value.trim();
+  if (!isLoggedIn || !expireTime) {
+    alert("⚠️ 로그인 상태가 아닙니다. 다시 로그인 해주세요.");
+    window.location.href = "login.html";
+    return;
+  }
 
-    const validId = "champion224";
-    const validPw = "1234";
+  let expireTimeNum = Number(expireTime);
 
-    if (username === validId && password === validPw) {
-      // 로그인 성공
-      const expireTime = Date.now() + LOGIN_DURATION;
-      sessionStorage.setItem("isLoggedIn", "true");
-      sessionStorage.setItem("expireTime", expireTime.toString());
+  // 모달 요소들
+  const modal = document.getElementById("session-modal");
+  const timeText = document.getElementById("session-time-text");
+  const extendBtn = document.getElementById("extend-session-btn");
+  const logoutBtn = document.getElementById("logout-now-btn");
 
-      alert("✅ 로그인이 완료되었습니다.");
-      window.location.href = "https://champion224.github.io/main/";
-      // 로그인 실패
-      errorMsg.textContent = "❌ 아이디 또는 비밀번호가 틀렸습니다.";
-      errorMsg.style.display = "block";
+  function formatTime(ms) {
+    const totalSeconds = Math.floor(ms / 1000);
+    const minutes = String(Math.floor(totalSeconds / 60)).padStart(2, "0");
+    const seconds = String(totalSeconds % 60).padStart(2, "0");
+    return `${minutes}:${seconds}`;
+  }
 
-      usernameInput.value = "";
-      passwordInput.value = "";
-      usernameInput.focus();
-    }
-  });
+  function logout() {
+  alert("⏰ 세션이 만료되어 자동 로그아웃 됩니다.");
+  sessionStorage.clear();
+  window.location.href = "https://champion224.github.io/login/";
+}
+
+logoutBtn.addEventListener("click", () => {
+  modal.style.display = "none";
+  logout(); // 연장 안함 누르면 즉시 로그아웃
 });
+
+
+  // 연장 버튼 클릭 시 실행
+  extendBtn.addEventListener("click", () => {
+    expireTimeNum = Date.now() + LOGIN_DURATION;
+    sessionStorage.setItem("expireTime", expireTimeNum.toString());
+    modal.style.display = "none";
+  });
+
+  // 연장 안함 버튼 클릭 시 실행
+  logoutBtn.addEventListener("click", () => {
+    modal.style.display = "none";
+  });
+
+  // 1초마다 타이머 업데이트 및 조건 체크
+  const intervalId = setInterval(() => {
+    const now = Date.now();
+    const remaining = expireTimeNum - now;
+
+    if (remaining <= 0) {
+      clearInterval(intervalId);
+      logout();
+      return;
+    }
+
+    // 모달에 남은 시간 표시
+    timeText.textContent = `남은 로그인 시간: ${formatTime(remaining)}`;
+
+    // 30초 이하이면 모달 띄우기 (한번만 띄우기 위해 display 상태 체크)
+    if (remaining <= 30 * 1000 && modal.style.display === "none") {
+      modal.style.display = "flex";
+    }
+  }, 1000);
+})();

@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStorage.setItem("expireTime", expireTime.toString());
 
       alert("✅ 로그인이 완료되었습니다.");
-      window.location.href = "../Main/main.html";
+      window.location.href = "https://champion224.github.io/Main/main.html";
       // 로그인 실패
       errorMsg.textContent = "❌ 아이디 또는 비밀번호가 틀렸습니다.";
       errorMsg.style.display = "block";
